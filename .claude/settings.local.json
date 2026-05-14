@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -E \"\\\\.\\(ts|js|tsx|jsx\\)$\")",
+      "Bash(grep -E \"\\\\.\\(ts|js\\)$\")",
+      "Bash(kubectl get *)",
+      "Bash(python3 *)",
+      "Bash(oras repo *)",
+      "Bash(kubectl set image *)",
+      "Bash(kubectl rollout status *)"
+    ]
+  }
+}
