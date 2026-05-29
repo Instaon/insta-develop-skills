@@ -1,6 +1,6 @@
 ---
 name: insta-deployment
-description: 根据当前项目或工作目录下的 .env 读取 Deployment 信息，确认 Deployment 存在后，将当前镜像 tag 末尾的 commit id 替换为当前 Git 最新提交的前六位，并使用 kubectl 更新 Deployment 镜像。
+description: 根据项目代码根目录下的 acs-config.json 读取 Deployment 信息，确认 Deployment 存在后，将当前镜像 tag 末尾的 commit id 替换为当前 Git 最新提交的前六位，并使用 kubectl 更新 Deployment 镜像。
 ---
 
 # insta-deployment
@@ -13,7 +13,7 @@ description: 根据当前项目或工作目录下的 .env 读取 Deployment 信�
 
 ## Inputs
 
-从当前工作目录或项目根目录下的 `.env` 读取：
+从项目代码根目录（或当前工作目录）下的 `acs-config.json` 读取：
 
 - `DEPLOYMENT_NAME`：目标 Deployment 名称，必填
 - `NAMESPACE`：目标命名空间，选填，默认 `default`
@@ -30,18 +30,18 @@ description: 根据当前项目或工作目录下的 .env 读取 Deployment 信�
 
 ## Workflow
 
-1. 读取当前目录下的 `.env`。
-2. 获取 `DEPLOYMENT_NAME`。
-3. 获取 `NAMESPACE`，若不存在则使用 `default`。
+1. 读取项目代码根目录（或当前工作目录）下的 `acs-config.json`。
+2. 从 JSON 中获取 `DEPLOYMENT_NAME`。
+3. 从 JSON 中获取 `NAMESPACE`，若不存在则使用 `default`。
 4. 检查目标 Deployment 是否存在。
 5. 读取 Deployment 中的容器列表。
 6. 确定要更新的容器名：
-   - 优先使用 `.env` 中的 `CONTAINER_NAME`
+   - 优先使用 `acs-config.json` 中的 `CONTAINER_NAME`
    - 否则优先使用与 Deployment 同名的容器
    - 否则使用第一个容器
 7. 读取当前容器镜像。
 8. 获取当前 Git 仓库最近一次提交的 short commit id，并取前六位。
-9. 如果 `.env` 中存在 `CONTAINER_NAME`，则检查新镜像是否已在镜像仓库中构建完成（参见"检查镜像是否已构建"步骤）。如果镜像尚未构建完成，停止执行并提示用户。
+9. 如果 `acs-config.json` 中存在 `CONTAINER_NAME`，则检查新镜像是否已在镜像仓库中构建完成（参见"检查镜像是否已构建"步骤）。如果镜像尚未构建完成，停止执行并提示用户。
 10. 询问用户要发布的镜像版本（参见"确认发布版本"步骤）。
 11. 解析当前镜像 tag，根据用户选择的版本生成新镜像名。
 12. 执行 `kubectl set image` 更新 Deployment。
@@ -104,7 +104,7 @@ kubectl get deployment ${DEPLOYMENT_NAME} -n ${NAMESPACE} -o jsonpath='{.spec.te
 
 ### 5. 检查镜像是否已构建
 
-如果 `.env` 中存在 `CONTAINER_NAME`，在执行镜像替换前，使用 `oras` 查询镜像仓库中的 tag 列表，确认新 tag 已存在：
+如果 `acs-config.json` 中存在 `CONTAINER_NAME`，在执行镜像替换前，使用 `oras` 查询镜像仓库中的 tag 列表，确认新 tag 已存在：
 
 1. 先根据步骤 8 获取最新的 6 位 commit id。
 2. 根据步骤 10 的规则，构造出新的镜像 tag（即替换最后一段 commit id 后的完整 tag）。
@@ -158,8 +158,8 @@ kubectl rollout undo deployment/${DEPLOYMENT_NAME} -n ${NAMESPACE}
 
 遇到以下情况时应停止执行并明确报错：
 
-- `.env` 不存在
-- `DEPLOYMENT_NAME` 缺失
+- `acs-config.json` 不存在或不是合法的 JSON 格式
+- `DEPLOYMENT_NAME` 缺失或为空
 - 当前目录不是 Git 仓库
 - 无法获取最新 commit id
 - Deployment 不存在
