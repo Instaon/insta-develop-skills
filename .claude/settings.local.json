@@ -9,7 +9,8 @@
       "Bash(kubectl set image *)",
       "Bash(kubectl rollout status *)",
       "Bash(git add *)",
-      "Bash(git commit *)"
+      "Bash(git commit *)",
+      "Bash(git push *)"
     ]
   }
 }
