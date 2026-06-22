@@ -30,23 +30,24 @@ description: 根据项目代码根目录下的 acs-config.json 读取 Deployment
 
 ## Workflow
 
-1. 读取项目代码根目录（或当前工作目录）下的 `acs-config.json`。
-2. 从 JSON 中获取 `DEPLOYMENT_NAME`。
-3. 从 JSON 中获取 `NAMESPACE`，若不存在则使用 `default`。
-4. 检查目标 Deployment 是否存在。
-5. 读取 Deployment 中的容器列表。
-6. 确定要更新的容器名：
+1. 操作前先更新 Git 仓库，拉取最新代码保持最新（如执行 `git pull`）。
+2. 读取项目代码根目录（或当前工作目录）下的 `acs-config.json`。
+3. 从 JSON 中获取 `DEPLOYMENT_NAME`。
+4. 从 JSON 中获取 `NAMESPACE`，若不存在则使用 `default`。
+5. 检查目标 Deployment 是否存在。
+6. 读取 Deployment 中的容器列表。
+7. 确定要更新的容器名：
    - 优先使用 `acs-config.json` 中的 `CONTAINER_NAME`
    - 否则优先使用与 Deployment 同名的容器
    - 否则使用第一个容器
-7. 读取当前容器镜像。
-8. 获取当前 Git 仓库最近一次提交的 short commit id，并取前六位。
-9. 如果 `acs-config.json` 中存在 `CONTAINER_NAME`，则检查新镜像是否已在镜像仓库中构建完成（参见"检查镜像是否已构建"步骤）。如果镜像尚未构建完成，停止执行并提示用户。
-10. 询问用户要发布的镜像版本（参见"确认发布版本"步骤）。
-11. 解析当前镜像 tag，根据用户选择的版本生成新镜像名。
-12. 执行 `kubectl set image` 更新 Deployment。
-13. 执行 `kubectl rollout status` 确认发布完成。
-14. 输出 Deployment、namespace、container、旧镜像、新镜像。
+8. 读取当前容器镜像。
+9. 获取当前 Git 仓库最近一次提交的 short commit id，并取前六位。
+10. 如果 `acs-config.json` 中存在 `CONTAINER_NAME`，则检查新镜像是否已在镜像仓库中构建完成（参见"检查镜像是否已构建"步骤）。如果镜像尚未构建完成，停止执行并提示用户。
+11. 询问用户要发布的镜像版本（参见"确认发布版本"步骤）。
+12. 解析当前镜像 tag，根据用户选择的版本生成新镜像名。
+13. 执行 `kubectl set image` 更新 Deployment。
+14. 执行 `kubectl rollout status` 确认发布完成。
+15. 输出 Deployment、namespace、container、旧镜像、新镜像。
 
 ## Image Tag Replacement Rule
 
@@ -106,8 +107,8 @@ kubectl get deployment ${DEPLOYMENT_NAME} -n ${NAMESPACE} -o jsonpath='{.spec.te
 
 如果 `acs-config.json` 中存在 `CONTAINER_NAME`，在执行镜像替换前，使用 `oras` 查询镜像仓库中的 tag 列表，确认新 tag 已存在：
 
-1. 先根据步骤 8 获取最新的 6 位 commit id。
-2. 根据步骤 10 的规则，构造出新的镜像 tag（即替换最后一段 commit id 后的完整 tag）。
+1. 先根据步骤 9 获取最新的 6 位 commit id。
+2. 根据步骤 11 的规则，构造出新的镜像 tag（即替换最后一段 commit id 后的完整 tag）。
 3. 执行以下命令获取仓库中所有已构建的 tag：
 
 ```bash
