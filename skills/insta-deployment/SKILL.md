@@ -192,3 +192,4 @@ kubectl rollout undo deployment/${DEPLOYMENT_NAME} -n ${NAMESPACE}
 - 需要更新镜像时，应始终更新 Deployment 模板。
 - 如果 Deployment 是多容器的，必须明确容器名，避免误更新。
 - 如果镜像 tag 规范不一致，应先确认 tag 命名规则，再决定是否执行替换。
+- 更新最新镜像指的是更换镜像tag，不需要考虑其他内容的更新，除非用户指定切换仓库或者镜像名称。
