@@ -1,0 +1,3 @@
+[submodule "insta-backendApi-docs"]
+	path = insta-backendApi-docs
+	url = https://github.com/Instaon/insta-backendApi-docs.git
