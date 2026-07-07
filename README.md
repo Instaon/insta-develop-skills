@@ -2,6 +2,16 @@
 
 Insta 研发团队 Claude Code 技能集合。本仓库沉淀了团队在部署、排障、任务规划等场景下高频使用的 skill，方便在各个项目中复用。
 
+## 安装指南
+
+在任意项目目录下，通过 [`skills`](https://github.com/anthropics/skills) CLI 一键安装本仓库的技能：
+
+```bash
+npx skills add Instaon/insta-develop-skills
+```
+
+执行后技能会被安装到当前项目对应的 `.claude/skills` 目录，安装完成即可在 Claude Code 中使用。
+
 ## 包含的技能
 
 | 技能 | 目录 | 说明 |
