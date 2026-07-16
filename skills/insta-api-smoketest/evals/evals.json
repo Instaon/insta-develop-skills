@@ -1,0 +1,23 @@
+{
+  "skill_name": "insta-api-smoketest",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "我刚在 insta-marketing-platform 上改了排行榜活动那块的逻辑，帮我测一下最近动过的接口通不通，本地服务已经起在 3000 端口了。",
+      "expected_output": "进入增量测试：git fetch 后取最近提交涉及的改动文件，匹配 api_documentation.md 里排行榜/活动相关接口（如 /activities/:id/rank、/activities/:id/result 等），用 mock 参数对这些接口发 curl，输出冒烟报告。默认 local 环境，不应全量遍历所有接口。",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "insta-claw-hire 这个服务要上线了，把 api_documentation.md 里列的所有接口在 dev 环境全量跑一遍冒烟测试，base url 用文档里 dev 那栏。",
+      "expected_output": "识别用户明确要求'全量'和'dev 环境'，遍历 api_documentation.md 全部接口逐一 curl，报告应覆盖文档中每一个接口，环境用 dev 的 base url。",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "在 dev 上帮我 curl 一下 insta-marketing-platform 的 /activities/:id/join 这个接口，看看现在还通不通，之前有人动过抽奖活动。",
+      "expected_output": "只测用户点名的 /activities/:id/join 这一个接口（指定接口模式），环境用 dev 的 base url，:id 用 mock 值替换，发 curl 并报告该接口状态。不应顺便测其他接口。",
+      "files": []
+    }
+  ]
+}
