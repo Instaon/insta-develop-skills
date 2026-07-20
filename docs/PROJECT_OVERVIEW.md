@@ -22,6 +22,8 @@
 | --- | --- | --- |
 | insta-deployment | `skills/insta-deployment/` | 项目级（随仓库分发） |
 | insta-error-triage | `skills/insta-error-triage/` | 项目级 |
+| insta-api-smoketest | `skills/insta-api-smoketest/` | 项目级 |
+| insta-test-port | `skills/insta-test-port/` | 项目级 |
 | planning-with-files-zh | `.agents/skills/planning-with-files-zh/` | Agent 级 |
 
 ### 1. insta-deployment —— Kubernetes 镜像版本管理
@@ -49,7 +51,23 @@
   - 紧急 → 在目标项目仓库创建 issue，正文 `@Claude01` 触发自动化处理，提交前必须先向用户确认内容；
   - 非紧急 → 直接输出报告（错误摘要、根因分析、影响范围、修复复杂度、修复方向）。
 
-### 3. planning-with-files-zh —— 文件化任务规划系统
+### 3. insta-api-smoketest —— 接口文档黑盒冒烟
+
+基于 `insta-backendApi-docs` 的接口文档，用 curl 发 mock 请求做轻量契约验证。默认**增量**（只测近期改动相关接口），用户明确要求时才全量。失败项在「确认实现侧问题 + 影响使用」时才自主建 issue，与 error-triage 策略对齐。
+
+### 4. insta-test-port —— 测试端口分配
+
+从 `insta-backendApi-docs` 根目录的 `test-port-registry.yaml` 领取下一个可用测试端口，避免联调撞端口：
+
+1. 定位可写的 docs 仓库副本并 `pull` 最新
+2. 读 `max_used_port`，新端口 = 最大值 + 1
+3. 回写 `max_used_port` 与 `allocations`（登记 service / note）
+4. **必须本地 commit**；push 尽力而为（网络失败可忽略，不回滚 commit）
+5. 向用户回报端口号与推送是否成功
+
+只负责注册表领号，不强制改业务项目配置。
+
+### 5. planning-with-files-zh —— 文件化任务规划系统
 
 借鉴 Manus 的「磁盘工作记忆」理念，用持久化的 Markdown 文件组织复杂任务：
 
