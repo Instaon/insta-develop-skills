@@ -9,6 +9,10 @@ Insta 研发团队 Claude Code 技能集合。本仓库沉淀了团队在部署�
 ```bash
 npx skills add Instaon/insta-develop-skills
 ```
+或，安装一个
+```bash
+npx skills add https://github.com/Instaon/insta-develop-skills --skill insta-branch-norm
+```
 
 执行后技能会被安装到当前项目对应的 `.claude/skills` 目录，安装完成即可在 Claude Code 中使用。
 
